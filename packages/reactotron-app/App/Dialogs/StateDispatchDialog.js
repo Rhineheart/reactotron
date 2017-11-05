@@ -1,6 +1,7 @@
 import React, { Component } from 'react'
 import ReactDOM from 'react-dom'
 import { ModalPortal, ModalBackground, ModalDialog } from 'react-modal-dialog'
+import Checkbox from '../Shared/Checkbox'
 import { inject, observer } from 'mobx-react'
 import AppStyles from '../Theme/AppStyles'
 import Colors from '../Theme/Colors'
@@ -12,7 +13,8 @@ const ENTER_KEYSTROKE = `${Keystroke.modifierName} + Enter`
 const ENTER_HINT = 'Dispatch'
 const DIALOG_TITLE = 'Dispatch Action'
 const INSTRUCTIONS = <span> Create an action that will be dispatched to the client to run.</span>
-const INPUT_PLACEHOLDER = "{ type: 'RepoMessage.Request' }"
+const INPUT_EVAL_PLACEHOLDER = "{ type: 'RepoMessage.Request' }"
+const INPUT_YAML_PLACEHOLDER = 'type: RepoMessage.Request\npayload: 1'
 const FIELD_LABEL = 'Action'
 
 const Styles = {
@@ -21,34 +23,34 @@ const Styles = {
     padding: 4,
     width: 450,
     backgroundColor: Colors.background,
-    color: Colors.foreground
+    color: Colors.foreground,
   },
   container: {
-    ...AppStyles.Layout.vbox
+    ...AppStyles.Layout.vbox,
   },
   keystrokes: {
     ...AppStyles.Layout.hbox,
     alignSelf: 'center',
     paddingTop: 10,
     paddingBottom: 20,
-    fontSize: 13
+    fontSize: 13,
   },
   hotkey: {
-    padding: '0 10px'
+    padding: '0 10px',
   },
   keystroke: {
     backgroundColor: Colors.backgroundHighlight,
     color: Colors.foreground,
     padding: '4px 8px',
-    borderRadius: 4
+    borderRadius: 4,
   },
   header: {
     ...AppStyles.Layout.vbox,
-    padding: '2em 2em 1em'
+    padding: '2em 2em 1em',
   },
   body: {
     ...AppStyles.Layout.vbox,
-    padding: '2em 2em 4em'
+    padding: '2em 2em 4em',
   },
   title: {
     margin: 0,
@@ -56,18 +58,18 @@ const Styles = {
     textAlign: 'left',
     fontWeight: 'normal',
     fontSize: 24,
-    color: Colors.heading
+    color: Colors.heading,
   },
   subtitle: {
     color: Colors.foreground,
     textAlign: 'left',
     padding: 0,
-    margin: 0
+    margin: 0,
   },
   fieldLabel: {
     color: Colors.heading,
     fontSize: 13,
-    textTransform: 'uppercase'
+    textTransform: 'uppercase',
   },
   dispatchField: {
     borderTop: 0,
@@ -77,8 +79,12 @@ const Styles = {
     fontSize: 23,
     color: Colors.foregroundLight,
     backgroundColor: 'inherit',
-    height: 200
-  }
+    height: 200,
+  },
+  checkboxPadding: {
+    paddingTop: 4,
+    paddingBottom: 4,
+  },
 }
 
 @inject('session')
@@ -89,31 +95,35 @@ class StateDispatchDialog extends Component {
     session.ui.actionToDispatch = e.target.value
   }
 
-  componentDidUpdate () {
+  componentDidUpdate() {
     const field = ReactDOM.findDOMNode(this.field)
 
     field && field.focus()
   }
 
-  render () {
+  render() {
     const { ui } = this.props.session
-    if (!ui.showStateDispatchDialog) return null
+
+    const useYAML = ui.actionUseYAML
 
     return (
       <ModalPortal>
-        <ModalBackground onClose={ui.closeStateDispatchDialog}>
+        <ModalBackground onClose={ui.closeDialog}>
           <ModalDialog style={Styles.dialog}>
             <div style={Styles.container}>
               <div style={Styles.header}>
                 <h1 style={Styles.title}>{DIALOG_TITLE}</h1>
                 <p style={Styles.subtitle}>{INSTRUCTIONS}</p>
+                <div style={Styles.checkboxPadding}>
+                  <Checkbox checked={useYAML} label={'Use YAML'} onToggle={ui.toggleActionYAML} />
+                </div>
               </div>
               <div style={Styles.body}>
                 <label style={Styles.fieldLabel}>{FIELD_LABEL}</label>
                 <textarea
-                  placeholder={INPUT_PLACEHOLDER}
+                  placeholder={useYAML ? INPUT_YAML_PLACEHOLDER : INPUT_EVAL_PLACEHOLDER}
                   style={Styles.dispatchField}
-                  type='text'
+                  type="text"
                   ref={node => (this.field = node)}
                   value={ui.actionToDispatch}
                   onKeyPress={this.handleKeyPress}

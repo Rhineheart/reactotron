@@ -1,12 +1,6 @@
 import React, { Component } from 'react'
 import Colors from '../Theme/Colors'
 import AppStyles from '../Theme/AppStyles'
-import { inject, observer } from 'mobx-react'
-import IconFilter from 'react-icons/lib/md/filter-list'
-import IconClear from 'react-icons/lib/md/delete-sweep'
-import IconSearch from 'react-icons/lib/md/search'
-
-const TITLE = 'Timeline'
 
 const toolbarButton = {
   cursor: 'pointer',
@@ -77,42 +71,20 @@ const Styles = {
   },
 }
 
-@inject('session')
-@observer
-class TimelineHeader extends Component {
-  getValue = evt => {
-    this.props.onFilter(evt.target.value)
-  }
-
-  render() {
-    const { ui } = this.props.session
-
-    return (
-      <div style={Styles.container}>
-        <div style={Styles.content}>
-          <div style={Styles.left} />
-          <div style={Styles.center}>
-            <div style={Styles.title}>{TITLE}</div>
-          </div>
-          <div style={Styles.right}>
-            <div style={Styles.searchContainer}>
-              <input
-                style={Styles.searchInput}
-                onInput={this.props.onFilter ? this.getValue : undefined}
-              />
-              <IconSearch size={Styles.searchIconSize} style={Styles.searchIcon} />
-            </div>
-            <IconFilter
-              size={Styles.iconSize}
-              style={Styles.toolbarFilter}
-              onClick={() => ui.openDialog('timelineFilter')}
-            />
-            <IconClear size={Styles.iconSize} style={Styles.toolbarClear} onClick={ui.reset} />
-          </div>
+export const ViewHeader = props => {
+  const { title, left, center, right } = props
+  return (
+    <div style={Styles.container}>
+      <div style={Styles.content}>
+        <div style={Styles.left}>{left}</div>
+        <div style={Styles.center}>
+          {title ? <div style={Styles.title}>{title}</div> : null}
+          {center}
         </div>
+        <div style={Styles.right}>{right}</div>
       </div>
-    )
-  }
+    </div>
+  )
 }
 
-export default TimelineHeader
+export default ViewHeader

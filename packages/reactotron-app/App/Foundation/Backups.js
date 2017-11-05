@@ -12,13 +12,13 @@ const Styles = {
   container: {
     ...AppStyles.Layout.vbox,
     margin: 0,
-    flex: 1
+    flex: 1,
   },
   backups: {
     margin: 0,
     padding: 0,
     overflowY: 'auto',
-    overflowX: 'hidden'
+    overflowX: 'hidden',
   },
   row: {
     ...AppStyles.Layout.hbox,
@@ -26,35 +26,35 @@ const Styles = {
     justifyContent: 'space-between',
     alignItems: 'center',
     borderBottom: `1px solid ${Colors.line}`,
-    cursor: 'pointer'
+    cursor: 'pointer',
   },
   name: {
     color: Colors.tag,
     textAlign: 'left',
-    flex: 1
+    flex: 1,
   },
   iconSize: 24,
   upload: {
     paddingRight: 10,
-    cursor: 'pointer'
+    cursor: 'pointer',
   },
   button: {
     cursor: 'pointer',
-    paddingLeft: 10
-  }
+    paddingLeft: 10,
+  },
 }
 
 @inject('session')
 @observer
 class Backups extends Component {
-  constructor (props) {
+  constructor(props) {
     super(props)
     this.renderBackup = this.renderBackup.bind(this)
   }
 
-  renderEmpty () {
+  renderEmpty() {
     return (
-      <Empty icon='import-export' title='No Snapshots'>
+      <Empty icon="import-export" title="No Snapshots">
         <p>
           To take a snapshot of your current Redux store, press the Download button in the top right
           corner of this window.
@@ -63,7 +63,7 @@ class Backups extends Component {
     )
   }
 
-  renderBackup (backup, indent = 0) {
+  renderBackup(backup, indent = 0) {
     const { ui } = this.props.session
     const { restoreState } = ui
     const { state } = backup.payload
@@ -76,7 +76,7 @@ class Backups extends Component {
       event.stopPropagation()
     }
     const renameState = event => {
-      ui.openRenameStateDialog(backup)
+      ui.openDialog('stateRename', backup)
       event.stopPropagation()
     }
 
@@ -89,7 +89,7 @@ class Backups extends Component {
     )
   }
 
-  render () {
+  render() {
     const backups = this.props.session.backups.slice()
     const isEmpty = backups.length === 0
     return (

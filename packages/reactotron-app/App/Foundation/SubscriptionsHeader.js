@@ -8,7 +8,7 @@ import IconClear from 'react-icons/lib/md/delete-forever'
 const TITLE = 'Redux Subscriptions'
 
 const toolbarButton = {
-  cursor: 'pointer'
+  cursor: 'pointer',
 }
 
 const Styles = {
@@ -17,48 +17,48 @@ const Styles = {
     backgroundColor: Colors.backgroundSubtleLight,
     borderBottom: `1px solid ${Colors.chromeLine}`,
     color: Colors.foregroundDark,
-    boxShadow: `0px 0px 30px ${Colors.glow}`
+    boxShadow: `0px 0px 30px ${Colors.glow}`,
   },
   content: {
     height: 60,
     paddingLeft: 10,
     paddingRight: 10,
     ...AppStyles.Layout.hbox,
-    justifyContent: 'space-between'
+    justifyContent: 'space-between',
   },
   left: {
     ...AppStyles.Layout.hbox,
-    width: 100
+    width: 100,
   },
   right: {
     width: 100,
     ...AppStyles.Layout.hbox,
     justifyContent: 'flex-end',
-    alignItems: 'center'
+    alignItems: 'center',
   },
   center: {
     ...AppStyles.Layout.vbox,
     flex: 1,
     alignItems: 'center',
-    justifyContent: 'center'
+    justifyContent: 'center',
   },
   title: {
     color: Colors.foregroundLight,
-    textAlign: 'center'
+    textAlign: 'center',
   },
   iconSize: 32,
   toolbarAdd: {
-    ...toolbarButton
+    ...toolbarButton,
   },
   toolbarClear: {
-    ...toolbarButton
-  }
+    ...toolbarButton,
+  },
 }
 
 @inject('session')
 @observer
 class SubscriptionsHeader extends Component {
-  render () {
+  render() {
     const { ui } = this.props.session
 
     return (
@@ -72,7 +72,7 @@ class SubscriptionsHeader extends Component {
             <IconAdd
               size={Styles.iconSize}
               style={Styles.toolbarAdd}
-              onClick={ui.openStateWatchDialog}
+              onClick={() => ui.openDialog('stateWatch')}
             />
             <IconClear
               size={Styles.iconSize}

@@ -2,6 +2,7 @@ import { observable, action, asMap } from 'mobx'
 import Mousetrap from '../Lib/Mousetrap.min.js'
 import { isNilOrEmpty } from 'ramdasauce'
 import Keystroke from '../Lib/Keystroke'
+import { safeLoad } from 'js-yaml'
 
 /**
  * Handles UI state.
@@ -11,35 +12,78 @@ class UI {
    * Which tab are we on?
    */
   @observable tab = 'timeline'
+  @observable currentDialog = null
+
+  dialogues = {
+    stateDispatch: {
+      onOpen: () => {
+        console.log('Dispatch opened.')
+      },
+      onClose: () => {
+        console.log('Dispatch closed.')
+      },
+      onSubmit: () => {
+        console.log('Dispatch submitted.')
+        let action = null
+        try {
+          // brackets are need on chromium side, huh.
+          action = this.actionUseYAML
+            ? safeLoad(this.actionToDispatch)
+            : eval('(' + this.actionToDispatch + ')') // eslint-disable-line
+        } catch (e) {
+          console.error(e)
+        }
+        // jet if not valid
+        if (isNilOrEmpty(action)) return
+
+        // let's attempt to dispatch
+        this.dispatchAction(action)
+      },
+    },
+    stateFind: {
+      onPop: () => {
+        this.closeDialog()
+      },
+    },
+    stateWatch: {
+      onFormSubmit: () => {
+        console.log('Ey')
+        this.server.stateValuesSubscribe(this.watchToAdd)
+        this.watchToAdd = null
+      },
+    },
+    stateRename: {
+      onOpen: backup => {
+        this.backupStateName = backup.payload.name
+        this.currentBackupState = backup
+      },
+      onFormSubmit: () => {
+        this.currentBackupState.payload.name = this.backupStateName
+        this.backupStateName = null
+      },
+    },
+    help: {
+      onPop: () => {
+        this.closeDialog()
+      },
+    },
+    timelineFilter: {},
+    newAction: {},
+  }
 
   /**
    * Targets state keys or values from the UI & commands.
    */
   @observable keysOrValues = 'keys'
 
-  // whether or not to show the state find dialog
-  @observable showStateFindDialog = false
-
-  // whether or not to show the state dispatch dialog
-  @observable showStateDispatchDialog = false
-
-  // whether or not to show the help dialog
-  @observable showHelpDialog = false
-
-  // the watch dialog
-  @observable showStateWatchDialog = false
-
-  // the rename dialog
-  @observable showRenameStateDialog = false
-
-  // wheter or not to show the timeline filter dialog
-  @observable showFilterTimelineDialog = false
-
   // the current watch to add
   @observable watchToAdd
 
   // the current name of a backup
   @observable backupStateName
+
+  // use yaml as action parser
+  @observable actionUseYAML = false
 
   // the current action to dispatch
   @observable actionToDispatch
@@ -51,21 +95,33 @@ class UI {
   // from the command toolbar to the command
   commandProperties = {}
 
-  constructor (server) {
+  constructor(server) {
     this.server = server
 
     Mousetrap.prototype.stopCallback = () => false
 
     Mousetrap.bind(`${Keystroke.mousetrap}+k`, this.reset)
-    Mousetrap.bind(`${Keystroke.mousetrap}+f`, this.openStateFindDialog)
-    Mousetrap.bind(`${Keystroke.mousetrap}+shift+f`, this.openFilterTimelineDialog)
-    Mousetrap.bind(`${Keystroke.mousetrap}+d`, this.openStateDispatchDialog)
+    Mousetrap.bind(`${Keystroke.mousetrap}+f`, () => {
+      this.openDialog('stateFind')
+    })
+    Mousetrap.bind(`${Keystroke.mousetrap}+shift+f`, () => {
+      this.openDialog('timelineFilter')
+    })
+    Mousetrap.bind(`${Keystroke.mousetrap}+d`, () => {
+      this.openDialog('stateDispatch')
+    })
     Mousetrap.bind(`${Keystroke.mousetrap}+s`, this.backupState)
     Mousetrap.bind(`tab`, this.toggleKeysValues)
     Mousetrap.bind(`escape`, this.popState)
-    Mousetrap.bind(`enter`, this.submitCurrentForm)
-    Mousetrap.bind(`${Keystroke.mousetrap}+enter`, this.submitCurrentFormDelicately)
-    Mousetrap.bind(`${Keystroke.mousetrap}+n`, this.openStateWatchDialog)
+    Mousetrap.bind(`enter`, () => {
+      this.submitForm()
+    })
+    Mousetrap.bind(`${Keystroke.mousetrap}+enter`, () => {
+      this.submitDialog()
+    })
+    Mousetrap.bind(`${Keystroke.mousetrap}+n`, () => {
+      this.openDialog('stateWatch')
+    })
     Mousetrap.bind(`${Keystroke.mousetrap}+1`, this.switchTab.bind(this, 'timeline'))
     Mousetrap.bind(`${Keystroke.mousetrap}+2`, this.switchTab.bind(this, 'subscriptions'))
     Mousetrap.bind(`${Keystroke.mousetrap}+3`, this.switchTab.bind(this, 'backups'))
@@ -80,43 +136,11 @@ class UI {
   }
 
   @action
-  popState = () => {
-    if (this.showStateFindDialog) {
-      this.closeStateFindDialog()
-    }
-    if (this.showHelpDialog) {
-      this.closeHelpDialog()
-    }
-  }
-
-  @action
-  submitCurrentForm = () => {
-    if (this.showStateWatchDialog) {
-      this.submitStateWatch()
-    } else if (this.showRenameStateDialog) {
-      this.submitRenameState()
-    }
-  }
-
-  @action
-  submitCurrentFormDelicately = () => {
-    if (this.showStateDispatchDialog) {
-      this.submitStateDispatch()
-    }
-  }
-
-  @action
-  submitStateWatch = () => {
-    this.server.stateValuesSubscribe(this.watchToAdd)
-    this.showStateWatchDialog = false
-    this.watchToAdd = null
-  }
-
-  @action
-  submitRenameState = () => {
-    this.currentBackupState.payload.name = this.backupStateName
-    this.showRenameStateDialog = false
-    this.backupStateName = null
+  popState = (...args) => {
+    const dialog = this.currentDialog
+    const events = this.dialogues[dialog]
+    if (!events) return
+    events.onPop && events.onPop(...args)
   }
 
   @action
@@ -130,9 +154,14 @@ class UI {
   }
 
   @action
-  setActionToDispatch (action) {
+  setActionToDispatch(action) {
     this.actionToDispatch = action
-    this.showStateDispatchDialog = true
+    this.openDialog('stateDispatch')
+  }
+
+  @action
+  toggleActionYAML = () => {
+    this.actionUseYAML = !this.actionUseYAML
   }
 
   @action
@@ -141,8 +170,12 @@ class UI {
     let action = null
     try {
       // brackets are need on chromium side, huh.
-      action = eval('(' + this.actionToDispatch + ')') // eslint-disable-line
-    } catch (e) {}
+      action = this.actionUseYAML
+        ? safeLoad(this.actionToDispatch)
+        : eval('(' + this.actionToDispatch + ')') // eslint-disable-line
+    } catch (e) {
+      console.error(e)
+    }
     // jet if not valid
     if (isNilOrEmpty(action)) return
 
@@ -153,75 +186,40 @@ class UI {
   }
 
   @action
-  openStateFindDialog = () => {
-    this.showStateFindDialog = true
+  openDialog = (dialog, ...args) => {
+    this.currentDialog = dialog
+    const events = this.dialogues[dialog]
+    if (!events) return
+    events.onOpen && events.onOpen(...args)
   }
 
   @action
-  closeStateFindDialog = () => {
-    this.showStateFindDialog = false
+  closeDialog = (...args) => {
+    const dialog = this.currentDialog
+    this.currentDialog = null
+    const events = this.dialogues[dialog]
+    if (!events) return
+    events.onClose && events.onClose(...args)
   }
 
   @action
-  openStateWatchDialog = () => {
-    this.showStateWatchDialog = true
+  submitDialog = (...args) => {
+    const dialog = this.currentDialog
+    const events = this.dialogues[dialog]
+    if (events) {
+      events.onSubmit && events.onSubmit(...args)
+    }
+
+    this.closeDialog(dialog)
   }
 
   @action
-  closeStateWatchDialog = () => {
-    this.showStateWatchDialog = false
-  }
+  submitForm = (...args) => {
+    const dialog = this.currentDialog
+    const events = this.dialogues[dialog]
+    if (!events) return
 
-  @action
-  openRenameStateDialog = backup => {
-    this.showRenameStateDialog = true
-    this.backupStateName = backup.payload.name
-    this.currentBackupState = backup
-  }
-
-  @action
-  closeRenameStateDialog = () => {
-    this.showRenameStateDialog = false
-  }
-
-  @action
-  openStateDispatchDialog = () => {
-    this.showStateDispatchDialog = true
-  }
-
-  @action
-  toggleHelpDialog = () => {
-    this.showHelpDialog = !this.showHelpDialog
-  }
-
-  @action
-  openHelpDialog = () => {
-    this.showHelpDialog = true
-  }
-
-  @action
-  closeStateDispatchDialog = () => {
-    this.showStateDispatchDialog = false
-  }
-
-  @action
-  closeHelpDialog = () => {
-    this.showHelpDialog = false
-  }
-
-  @action
-  openFilterTimelineDialog = () => {
-    this.showFilterTimelineDialog = true
-  }
-
-  @action
-  closeFilterTimelineDialog = () => {
-    this.showFilterTimelineDialog = false
-  }
-
-  @action
-  reset = () => {
-    this.server.commands.all.clear()
+    events.onFormSubmit && events.onFormSubmit(...args)
   }
 
   @action

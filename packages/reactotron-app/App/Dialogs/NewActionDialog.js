@@ -1,29 +1,26 @@
 import React, { Component } from 'react'
 import ReactDOM from 'react-dom'
 import { ModalPortal, ModalBackground, ModalDialog } from 'react-modal-dialog'
+import Checkbox from '../Shared/Checkbox'
 import { inject, observer } from 'mobx-react'
 import AppStyles from '../Theme/AppStyles'
 import Colors from '../Theme/Colors'
+import Keystroke from '../Lib/Keystroke'
 
-const INPUT_PLACEHOLDER = 'smurfs.7.name'
 const ESCAPE_KEYSTROKE = 'Esc'
-const ESCAPE_HINT = 'OMG Cancel'
-const ENTER_KEYSTROKE = 'Enter'
-const ENTER_HINT = 'Search'
-const TAB_KEYSTROKE = 'Tab'
-const TAB_HINT = 'Keys/Values'
-const DIALOG_TITLE_KEYS = 'State Keys'
-const DIALOG_TITLE_VALUES = 'State Values'
-const STATE_VALUES_INSTRUCTIONS = (
-  <span>
-    Retrieves a value from the state tree at the given path{' '}
-    <span style={{ color: Colors.bold }}>and all values below it</span>.
-  </span>
-)
-const STATE_KEYS_INSTRUCTIONS = (
-  <span>Retrieves a list of keys located at the given path in the state tree.</span>
-)
-const FIELD_LABEL = 'Path'
+const ENTER_KEYSTROKE = `${Keystroke.modifierName} + Enter`
+
+const INPUT_EVAL_PLACEHOLDER = "{ type: 'RepoMessage.Request' }"
+const INPUT_YAML_PLACEHOLDER = 'type: RepoMessage.Request'
+
+const ACTION_LABEL = 'Action'
+const IDENTIFIER_LABEL = 'Identifier'
+const IDENTIFIER_PLACEHOLDER = 'dispatch request'
+
+const DIALOG_TITLE = 'Define Action'
+const INSTRUCTIONS = <span>Pick a name and payload to store for convenient dispatching.</span>
+const ESCAPE_HINT = 'Cancel'
+const STORE_HINT = 'Store action'
 
 const Styles = {
   dialog: {
@@ -79,51 +76,49 @@ const Styles = {
     fontSize: 13,
     textTransform: 'uppercase',
   },
-  textField: {
+  dispatchField: {
     borderTop: 0,
     borderLeft: 0,
     borderRight: 0,
     borderBottom: `1px solid ${Colors.line}`,
     fontSize: 23,
     color: Colors.foregroundLight,
-    lineHeight: '40px',
     backgroundColor: 'inherit',
+    height: 200,
+  },
+  checkboxPadding: {
+    marginTop: 10,
+    paddingTop: 4,
+    paddingBottom: 4,
+  },
+
+  input: {
+    paddingTop: 4,
+    paddingBottom: 8,
+    border: 'none',
+    backgroundColor: 'inherit',
+    fontSize: 23,
+    color: Colors.foregroundLight,
   },
 }
 
 @inject('session')
 @observer
-class StateKeysAndValuesDialog extends Component {
+class NewActionDialog extends Component {
   constructor(props) {
     super(props)
     this.state = {
-      path: null,
+      yaml: false,
     }
   }
 
-  handleChange = e => {
-    this.setState({ path: e.target.value })
-  }
-
-  handleKeyPress = e => {
-    const { ui } = this.props.session
-    const { path } = this.state
-    if (e.key === 'Enter') {
-      this.setState({ path: null })
-      ui.getStateKeysOrValues(path)
-      ui.closeStateFindDialog()
-    }
-  }
-
-  componentDidUpdate() {
-    const field = ReactDOM.findDOMNode(this.field)
-
-    field && field.focus()
+  toggleYAML = () => {
+    this.setState({ yaml: !this.state.yaml })
   }
 
   render() {
     const { ui } = this.props.session
-    const isKeys = ui.keysOrValues === 'keys'
+    const useYAML = this.state.yaml
 
     return (
       <ModalPortal>
@@ -131,18 +126,22 @@ class StateKeysAndValuesDialog extends Component {
           <ModalDialog style={Styles.dialog}>
             <div style={Styles.container}>
               <div style={Styles.header}>
-                <h1 style={Styles.title}>{isKeys ? DIALOG_TITLE_KEYS : DIALOG_TITLE_VALUES}</h1>
-                <p style={Styles.subtitle}>
-                  {isKeys ? STATE_KEYS_INSTRUCTIONS : STATE_VALUES_INSTRUCTIONS}
-                </p>
+                <h1 style={Styles.title}>{DIALOG_TITLE}</h1>
+                <p style={Styles.subtitle}>{INSTRUCTIONS}</p>
               </div>
               <div style={Styles.body}>
-                <label style={Styles.fieldLabel}>{FIELD_LABEL}</label>
-                <input
-                  placeholder={INPUT_PLACEHOLDER}
-                  style={Styles.textField}
+                <label style={Styles.fieldLabel}>{IDENTIFIER_LABEL}</label>
+                <input style={Styles.input} placeholder={IDENTIFIER_PLACEHOLDER} />
+                <div style={Styles.checkboxPadding}>
+                  <Checkbox checked={useYAML} label={'Use YAML'} onToggle={this.toggleYAML} />
+                </div>
+                <label style={Styles.fieldLabel}>{ACTION_LABEL}</label>
+                <textarea
+                  placeholder={useYAML ? INPUT_YAML_PLACEHOLDER : INPUT_EVAL_PLACEHOLDER}
+                  style={Styles.dispatchField}
                   type="text"
                   ref={node => (this.field = node)}
+                  value={ui.actionToDispatch}
                   onKeyPress={this.handleKeyPress}
                   onChange={this.handleChange}
                 />
@@ -152,10 +151,7 @@ class StateKeysAndValuesDialog extends Component {
                   <span style={Styles.keystroke}>{ESCAPE_KEYSTROKE}</span> {ESCAPE_HINT}
                 </div>
                 <div style={Styles.hotkey}>
-                  <span style={Styles.keystroke}>{TAB_KEYSTROKE}</span> {TAB_HINT}
-                </div>
-                <div style={Styles.hotkey}>
-                  <span style={Styles.keystroke}>{ENTER_KEYSTROKE}</span> {ENTER_HINT}
+                  <span style={Styles.keystroke}>{ENTER_KEYSTROKE}</span> {STORE_HINT}
                 </div>
               </div>
             </div>
@@ -166,4 +162,4 @@ class StateKeysAndValuesDialog extends Component {
   }
 }
 
-export default StateKeysAndValuesDialog
+export default NewActionDialog

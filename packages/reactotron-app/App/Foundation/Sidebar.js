@@ -46,6 +46,9 @@ class Sidebar extends Component {
     this.handleClickBackups = () => {
       this.props.session.ui.switchTab('backups')
     }
+    this.handleClickActionStore = () => {
+      this.props.session.ui.switchTab('actionStore')
+    }
     this.handleClickNative = () => {
       this.props.session.ui.switchTab('native')
     }
@@ -77,6 +80,12 @@ class Sidebar extends Component {
               icon='import-export'
               isActive={ui.tab === 'backups'}
               onClick={this.handleClickBackups}
+            />
+            <SidebarButton
+              text='Redux Action Store'
+              icon='launch'
+              isActive={ui.tab === 'actionStore'}
+              onClick={this.handleClickActionStore}
             />
             <SidebarButton
               text='React Native'

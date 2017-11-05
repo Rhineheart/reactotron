@@ -17,7 +17,7 @@ class Session {
   subscriptions = {}
 
   // checks if it was the exact same as last time
-  isSubscriptionValuesSameAsLastTime (command) {
+  isSubscriptionValuesSameAsLastTime(command) {
     if (!isSubscription(command)) return false
     const rawChanges = command.payload ? command.payload.changes : []
     const newSubscriptions = fromPairs(map(change => [change.path, change.value], rawChanges))
@@ -37,7 +37,7 @@ class Session {
   }
 
   @computed
-  get commands () {
+  get commands() {
     return pipe(
       dotPath('server.commands.all'),
       reject(isSubscriptionCommandWithEmptyChanges),
@@ -48,7 +48,7 @@ class Session {
   }
 
   @computed
-  get watches () {
+  get watches() {
     const changeCommands = this.server.commands['state.values.change']
     if (isNil(changeCommands)) return []
     if (changeCommands.length === 0) return []
@@ -57,18 +57,18 @@ class Session {
   }
 
   @computed
-  get backups () {
+  get backups() {
     return this.server.commands['state.backup.response']
   }
 
   // are commands of this type hidden?
-  isCommandHidden (commandType) {
+  isCommandHidden(commandType) {
     return contains(commandType, this.commandsHiddenInTimeline)
   }
 
   // toggles whether a command type is to be ignored or not
   @action
-  toggleCommandVisibility (commandType) {
+  toggleCommandVisibility(commandType) {
     const hidden = this.isCommandHidden(commandType)
     if (hidden) {
       this.commandsHiddenInTimeline.remove(commandType)
@@ -78,7 +78,7 @@ class Session {
     return !hidden
   }
 
-  constructor (port = 9090) {
+  constructor(port = 9090) {
     this.server = createServer({ port })
     this.server.start()
     this.isSubscriptionValuesSameAsLastTime = this.isSubscriptionValuesSameAsLastTime.bind(this)
@@ -97,7 +97,7 @@ class Session {
     // when a new backup arrives, open the editor to rename it
     observe(this.backups, change => {
       if (change.type === 'splice' && change.added.length === 1) {
-        this.ui.openRenameStateDialog(change.added[0])
+        this.ui.openDialog('stateRename', change.added[0])
       }
     })
   }
