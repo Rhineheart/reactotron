@@ -14,7 +14,7 @@ const ENTER_HINT = 'Dispatch'
 const DIALOG_TITLE = 'Dispatch Action'
 const INSTRUCTIONS = <span> Create an action that will be dispatched to the client to run.</span>
 const INPUT_EVAL_PLACEHOLDER = "{ type: 'RepoMessage.Request' }"
-const INPUT_YAML_PLACEHOLDER = 'type: RepoMessage.Request\npayload: 1'
+const INPUT_YAML_PLACEHOLDER = 'type: RepoMessage.Request'
 const FIELD_LABEL = 'Action'
 
 const Styles = {
