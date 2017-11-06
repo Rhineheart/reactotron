@@ -106,18 +106,33 @@ const Styles = {
 class NewActionDialog extends Component {
   constructor (props) {
     super(props)
+
+    const { ui } = props.session
     this.state = {
-      yaml: false
+      id: ui.newActionState.id,
+      input: ui.newActionState.input,
+      yaml: ui.newActionState.yaml
     }
   }
 
   toggleYAML = () => {
-    this.setState({ yaml: !this.state.yaml })
+    const { ui } = this.props.session
+    ui.updateNewActionState({ yaml: !ui.newActionState.yaml })
+  }
+
+  onIdentifier = evt => {
+    const { ui } = this.props.session
+    ui.updateNewActionState({ id: evt.target.value })
+  }
+
+  onInput = evt => {
+    const { ui } = this.props.session
+    ui.updateNewActionState({ input: evt.target.value })
   }
 
   render () {
     const { ui } = this.props.session
-    const useYAML = this.state.yaml
+    const useYAML = ui.newActionState.yaml
 
     return (
       <ModalPortal>
@@ -130,7 +145,12 @@ class NewActionDialog extends Component {
               </div>
               <div style={Styles.body}>
                 <label style={Styles.fieldLabel}>{IDENTIFIER_LABEL}</label>
-                <input style={Styles.input} placeholder={IDENTIFIER_PLACEHOLDER} />
+                <input
+                  value={ui.newActionState.id}
+                  onChange={this.onIdentifier}
+                  style={Styles.input}
+                  placeholder={IDENTIFIER_PLACEHOLDER}
+                />
                 <div style={Styles.checkboxPadding}>
                   <Checkbox checked={useYAML} label={'Use YAML'} onToggle={this.toggleYAML} />
                 </div>
@@ -140,9 +160,8 @@ class NewActionDialog extends Component {
                   style={Styles.dispatchField}
                   type='text'
                   ref={node => (this.field = node)}
-                  value={ui.actionToDispatch}
-                  onKeyPress={this.handleKeyPress}
-                  onChange={this.handleChange}
+                  value={ui.newActionState.input}
+                  onChange={this.onInput}
                 />
               </div>
               <div style={Styles.keystrokes}>
