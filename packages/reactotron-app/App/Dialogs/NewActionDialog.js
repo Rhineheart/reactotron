@@ -1,5 +1,4 @@
 import React, { Component } from 'react'
-import ReactDOM from 'react-dom'
 import { ModalPortal, ModalBackground, ModalDialog } from 'react-modal-dialog'
 import Checkbox from '../Shared/Checkbox'
 import { inject, observer } from 'mobx-react'
@@ -28,34 +27,34 @@ const Styles = {
     padding: 4,
     width: 450,
     backgroundColor: Colors.background,
-    color: Colors.foreground,
+    color: Colors.foreground
   },
   container: {
-    ...AppStyles.Layout.vbox,
+    ...AppStyles.Layout.vbox
   },
   keystrokes: {
     ...AppStyles.Layout.hbox,
     alignSelf: 'center',
     paddingTop: 10,
     paddingBottom: 20,
-    fontSize: 13,
+    fontSize: 13
   },
   hotkey: {
-    padding: '0 10px',
+    padding: '0 10px'
   },
   keystroke: {
     backgroundColor: Colors.backgroundHighlight,
     color: Colors.foreground,
     padding: '4px 8px',
-    borderRadius: 4,
+    borderRadius: 4
   },
   header: {
     ...AppStyles.Layout.vbox,
-    padding: '2em 2em 1em',
+    padding: '2em 2em 1em'
   },
   body: {
     ...AppStyles.Layout.vbox,
-    padding: '2em 2em 4em',
+    padding: '2em 2em 4em'
   },
   title: {
     margin: 0,
@@ -63,18 +62,18 @@ const Styles = {
     textAlign: 'left',
     fontWeight: 'normal',
     fontSize: 24,
-    color: Colors.heading,
+    color: Colors.heading
   },
   subtitle: {
     color: Colors.foreground,
     textAlign: 'left',
     padding: 0,
-    margin: 0,
+    margin: 0
   },
   fieldLabel: {
     color: Colors.heading,
     fontSize: 13,
-    textTransform: 'uppercase',
+    textTransform: 'uppercase'
   },
   dispatchField: {
     borderTop: 0,
@@ -84,12 +83,12 @@ const Styles = {
     fontSize: 23,
     color: Colors.foregroundLight,
     backgroundColor: 'inherit',
-    height: 200,
+    height: 200
   },
   checkboxPadding: {
     marginTop: 10,
     paddingTop: 4,
-    paddingBottom: 4,
+    paddingBottom: 4
   },
 
   input: {
@@ -98,17 +97,17 @@ const Styles = {
     border: 'none',
     backgroundColor: 'inherit',
     fontSize: 23,
-    color: Colors.foregroundLight,
-  },
+    color: Colors.foregroundLight
+  }
 }
 
 @inject('session')
 @observer
 class NewActionDialog extends Component {
-  constructor(props) {
+  constructor (props) {
     super(props)
     this.state = {
-      yaml: false,
+      yaml: false
     }
   }
 
@@ -116,7 +115,7 @@ class NewActionDialog extends Component {
     this.setState({ yaml: !this.state.yaml })
   }
 
-  render() {
+  render () {
     const { ui } = this.props.session
     const useYAML = this.state.yaml
 
@@ -139,7 +138,7 @@ class NewActionDialog extends Component {
                 <textarea
                   placeholder={useYAML ? INPUT_YAML_PLACEHOLDER : INPUT_EVAL_PLACEHOLDER}
                   style={Styles.dispatchField}
-                  type="text"
+                  type='text'
                   ref={node => (this.field = node)}
                   value={ui.actionToDispatch}
                   onKeyPress={this.handleKeyPress}

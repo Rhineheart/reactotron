@@ -11,7 +11,7 @@ const Styles = {
   container: {
     ...AppStyles.Layout.vbox,
     margin: 0,
-    flex: 1,
+    flex: 1
   },
   newButton: {
     width: 60,
@@ -25,25 +25,25 @@ const Styles = {
     alignItems: 'center',
     backgroundColor: Colors.tag,
     color: '#fff',
-    cursor: 'pointer',
-  },
+    cursor: 'pointer'
+  }
 }
 
 @inject('session')
 @observer
 export class ActionStore extends Component {
-  constructor(props) {
+  constructor (props) {
     super(props)
     this.state = {
       actions: [
         // { name: 'Neat action', input: 'hello: world\nworld: hello' }
-      ],
+      ]
     }
   }
 
-  renderEmpty() {
+  renderEmpty () {
     return (
-      <Empty icon="launch" title="No stored actions">
+      <Empty icon='launch' title='No stored actions'>
         <p>
           To start defining an action, use the pen button. Any dispatched actions will show up here
           temporarily.
@@ -52,7 +52,7 @@ export class ActionStore extends Component {
     )
   }
 
-  render() {
+  render () {
     const { ui } = this.props.session
 
     return (

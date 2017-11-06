@@ -18,34 +18,34 @@ const Styles = {
     padding: 4,
     width: 450,
     backgroundColor: Colors.background,
-    color: Colors.foreground,
+    color: Colors.foreground
   },
   container: {
-    ...AppStyles.Layout.vbox,
+    ...AppStyles.Layout.vbox
   },
   keystrokes: {
     ...AppStyles.Layout.hbox,
     alignSelf: 'center',
     paddingTop: 10,
     paddingBottom: 20,
-    fontSize: 13,
+    fontSize: 13
   },
   hotkey: {
-    padding: '0 10px',
+    padding: '0 10px'
   },
   keystroke: {
     backgroundColor: Colors.backgroundHighlight,
     color: Colors.foreground,
     padding: '4px 8px',
-    borderRadius: 4,
+    borderRadius: 4
   },
   header: {
     ...AppStyles.Layout.vbox,
-    padding: '2em 2em 1em',
+    padding: '2em 2em 1em'
   },
   body: {
     ...AppStyles.Layout.vbox,
-    padding: '2em 2em 4em',
+    padding: '2em 2em 4em'
   },
   title: {
     margin: 0,
@@ -53,18 +53,18 @@ const Styles = {
     textAlign: 'left',
     fontWeight: 'normal',
     fontSize: 24,
-    color: Colors.heading,
+    color: Colors.heading
   },
   subtitle: {
     color: Colors.foreground,
     textAlign: 'left',
     padding: 0,
-    margin: 0,
+    margin: 0
   },
   fieldLabel: {
     color: Colors.heading,
     fontSize: 13,
-    textTransform: 'uppercase',
+    textTransform: 'uppercase'
   },
   textField: {
     borderTop: 0,
@@ -74,8 +74,8 @@ const Styles = {
     fontSize: 23,
     color: Colors.foregroundLight,
     lineHeight: '40px',
-    backgroundColor: 'inherit',
-  },
+    backgroundColor: 'inherit'
+  }
 }
 
 const RenameStateDialog = inject('session')(
@@ -95,8 +95,8 @@ const RenameStateDialog = inject('session')(
                   autoFocus
                   placeholder={INPUT_PLACEHOLDER}
                   style={Styles.textField}
-                  type="text"
-                  ref="textField"
+                  type='text'
+                  ref='textField'
                   defaultValue={ui.backupStateName}
                   onChange={e => (ui.backupStateName = e.target.value)}
                 />

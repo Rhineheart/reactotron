@@ -23,34 +23,34 @@ const Styles = {
     padding: 4,
     width: 450,
     backgroundColor: Colors.background,
-    color: Colors.foreground,
+    color: Colors.foreground
   },
   container: {
-    ...AppStyles.Layout.vbox,
+    ...AppStyles.Layout.vbox
   },
   keystrokes: {
     ...AppStyles.Layout.hbox,
     alignSelf: 'center',
     paddingTop: 10,
     paddingBottom: 20,
-    fontSize: 13,
+    fontSize: 13
   },
   hotkey: {
-    padding: '0 10px',
+    padding: '0 10px'
   },
   keystroke: {
     backgroundColor: Colors.backgroundHighlight,
     color: Colors.foreground,
     padding: '4px 8px',
-    borderRadius: 4,
+    borderRadius: 4
   },
   header: {
     ...AppStyles.Layout.vbox,
-    padding: '2em 2em 1em',
+    padding: '2em 2em 1em'
   },
   body: {
     ...AppStyles.Layout.vbox,
-    padding: '2em 2em 4em',
+    padding: '2em 2em 4em'
   },
   title: {
     margin: 0,
@@ -58,18 +58,18 @@ const Styles = {
     textAlign: 'left',
     fontWeight: 'normal',
     fontSize: 24,
-    color: Colors.heading,
+    color: Colors.heading
   },
   subtitle: {
     color: Colors.foreground,
     textAlign: 'left',
     padding: 0,
-    margin: 0,
+    margin: 0
   },
   fieldLabel: {
     color: Colors.heading,
     fontSize: 13,
-    textTransform: 'uppercase',
+    textTransform: 'uppercase'
   },
   dispatchField: {
     borderTop: 0,
@@ -79,12 +79,12 @@ const Styles = {
     fontSize: 23,
     color: Colors.foregroundLight,
     backgroundColor: 'inherit',
-    height: 200,
+    height: 200
   },
   checkboxPadding: {
     paddingTop: 4,
-    paddingBottom: 4,
-  },
+    paddingBottom: 4
+  }
 }
 
 @inject('session')
@@ -95,13 +95,13 @@ class StateDispatchDialog extends Component {
     session.ui.actionToDispatch = e.target.value
   }
 
-  componentDidUpdate() {
+  componentDidUpdate () {
     const field = ReactDOM.findDOMNode(this.field)
 
     field && field.focus()
   }
 
-  render() {
+  render () {
     const { ui } = this.props.session
 
     const useYAML = ui.actionUseYAML
@@ -123,7 +123,7 @@ class StateDispatchDialog extends Component {
                 <textarea
                   placeholder={useYAML ? INPUT_YAML_PLACEHOLDER : INPUT_EVAL_PLACEHOLDER}
                   style={Styles.dispatchField}
-                  type="text"
+                  type='text'
                   ref={node => (this.field = node)}
                   value={ui.actionToDispatch}
                   onKeyPress={this.handleKeyPress}

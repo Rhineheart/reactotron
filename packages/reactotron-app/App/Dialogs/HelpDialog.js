@@ -16,37 +16,37 @@ const Styles = {
     padding: 4,
     width: 450,
     backgroundColor: Colors.background,
-    color: Colors.foreground,
+    color: Colors.foreground
   },
   container: {
-    ...AppStyles.Layout.vbox,
+    ...AppStyles.Layout.vbox
   },
   keystrokes: {
     ...AppStyles.Layout.hbox,
     alignSelf: 'center',
     paddingTop: 10,
-    paddingBottom: 20,
+    paddingBottom: 20
   },
   hotkey: {
-    padding: '0 10px',
+    padding: '0 10px'
   },
   keystroke: {
     backgroundColor: Colors.backgroundHighlight,
     color: Colors.foreground,
     padding: '4px 8px',
-    borderRadius: 4,
+    borderRadius: 4
   },
   header: {
     ...AppStyles.Layout.vbox,
-    padding: '2em 2em 1em',
+    padding: '2em 2em 1em'
   },
   body: {
     ...AppStyles.Layout.vbox,
-    padding: '0.5em 2em 3em',
+    padding: '0.5em 2em 3em'
   },
   helpShortcut: {
     ...AppStyles.Layout.hbox,
-    margin: '2px 0',
+    margin: '2px 0'
   },
   title: {
     margin: 0,
@@ -54,30 +54,30 @@ const Styles = {
     textAlign: 'left',
     fontWeight: 'normal',
     fontSize: 24,
-    color: Colors.heading,
+    color: Colors.heading
   },
   subtitle: {
     color: Colors.foreground,
     textAlign: 'left',
     padding: 0,
-    margin: 0,
+    margin: 0
   },
   helpLabel: {
     // borderBottom: `1px solid ${Colors.line}`,
     color: Colors.bold,
     textTransform: 'uppercase',
-    width: 100,
+    width: 100
   },
   helpDetail: {
-    flex: 1,
+    flex: 1
   },
   group: {
     marginTop: 10,
     marginBottom: 2,
     paddingBottom: 2,
     color: Colors.highlight,
-    borderBottom: `1px solid ${Colors.line}`,
-  },
+    borderBottom: `1px solid ${Colors.line}`
+  }
 }
 
 const StateDispatchDialog = inject('session')(

@@ -38,19 +38,19 @@ class UI {
 
         // let's attempt to dispatch
         this.dispatchAction(action)
-      },
+      }
     },
     stateFind: {
       onPop: () => {
         this.closeDialog()
-      },
+      }
     },
     stateWatch: {
       onFormSubmit: () => {
         console.log('Ey')
         this.server.stateValuesSubscribe(this.watchToAdd)
         this.watchToAdd = null
-      },
+      }
     },
     stateRename: {
       onOpen: backup => {
@@ -60,15 +60,15 @@ class UI {
       onFormSubmit: () => {
         this.currentBackupState.payload.name = this.backupStateName
         this.backupStateName = null
-      },
+      }
     },
     help: {
       onPop: () => {
         this.closeDialog()
-      },
+      }
     },
     timelineFilter: {},
-    newAction: {},
+    newAction: {}
   }
 
   /**
@@ -95,7 +95,7 @@ class UI {
   // from the command toolbar to the command
   commandProperties = {}
 
-  constructor(server) {
+  constructor (server) {
     this.server = server
 
     Mousetrap.prototype.stopCallback = () => false
@@ -154,7 +154,7 @@ class UI {
   }
 
   @action
-  setActionToDispatch(action) {
+  setActionToDispatch (action) {
     this.actionToDispatch = action
     this.openDialog('stateDispatch')
   }

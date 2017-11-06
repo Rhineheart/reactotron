@@ -19,31 +19,31 @@ import { inject, observer } from 'mobx-react'
 
 const Styles = {
   container: {
-    ...AppStyles.Layout.vbox,
+    ...AppStyles.Layout.vbox
   },
   content: {
     ...AppStyles.Layout.vbox,
     backgroundColor: Colors.background,
     color: Colors.foreground,
     height: '100vh',
-    scroll: 'hidden',
+    scroll: 'hidden'
   },
   body: {
-    ...AppStyles.Layout.hbox,
+    ...AppStyles.Layout.hbox
   },
   app: {
     ...AppStyles.Layout.vbox,
     scroll: 'none',
-    overflow: 'hidden',
+    overflow: 'hidden'
   },
   page: {
-    ...AppStyles.Layout.vbox,
+    ...AppStyles.Layout.vbox
   },
   pageHidden: {
     flex: 0,
     height: 0,
-    visibility: 'hidden',
-  },
+    visibility: 'hidden'
+  }
 }
 
 const tabs = {
@@ -53,7 +53,7 @@ const tabs = {
   backups: <Backups />,
   actionStore: <ActionStore />,
   native: <Native />,
-  settings: <h1>Settings</h1>,
+  settings: <h1>Settings</h1>
 }
 
 const dialogues = {
@@ -63,13 +63,13 @@ const dialogues = {
   stateRename: <RenameStateDialog />,
   help: <HelpDialog />,
   timelineFilter: <FilterTimelineDialog />,
-  newAction: <NewActionDialog />,
+  newAction: <NewActionDialog />
 }
 
 @inject('session')
 @observer
 export default class VisualRoot extends Component {
-  render() {
+  render () {
     const { session } = this.props
     const { ui } = session
 

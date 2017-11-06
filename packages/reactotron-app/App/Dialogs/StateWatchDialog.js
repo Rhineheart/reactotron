@@ -20,40 +20,40 @@ const Styles = {
     padding: 4,
     width: 450,
     backgroundColor: Colors.background,
-    color: Colors.foreground,
+    color: Colors.foreground
   },
   examples: {},
   example: {
     padding: 0,
     margin: '0 0 0 40px',
-    color: Colors.bold,
+    color: Colors.bold
   },
   container: {
-    ...AppStyles.Layout.vbox,
+    ...AppStyles.Layout.vbox
   },
   keystrokes: {
     ...AppStyles.Layout.hbox,
     alignSelf: 'center',
     paddingTop: 10,
     paddingBottom: 20,
-    fontSize: 13,
+    fontSize: 13
   },
   hotkey: {
-    padding: '0 10px',
+    padding: '0 10px'
   },
   keystroke: {
     backgroundColor: Colors.backgroundHighlight,
     color: Colors.foreground,
     padding: '4px 8px',
-    borderRadius: 4,
+    borderRadius: 4
   },
   header: {
     ...AppStyles.Layout.vbox,
-    padding: '1em 2em 0em',
+    padding: '1em 2em 0em'
   },
   body: {
     ...AppStyles.Layout.vbox,
-    padding: '1em 2em 4em',
+    padding: '1em 2em 4em'
   },
   title: {
     margin: 0,
@@ -61,18 +61,18 @@ const Styles = {
     textAlign: 'left',
     fontWeight: 'normal',
     fontSize: 24,
-    color: Colors.heading,
+    color: Colors.heading
   },
   subtitle: {
     color: Colors.foreground,
     textAlign: 'left',
     padding: 0,
-    margin: 0,
+    margin: 0
   },
   fieldLabel: {
     color: Colors.heading,
     fontSize: 13,
-    textTransform: 'uppercase',
+    textTransform: 'uppercase'
   },
   textField: {
     borderTop: 0,
@@ -82,8 +82,8 @@ const Styles = {
     fontSize: 23,
     color: Colors.foregroundLight,
     lineHeight: '40px',
-    backgroundColor: 'inherit',
-  },
+    backgroundColor: 'inherit'
+  }
 }
 
 const INSTRUCTIONS = (
@@ -103,13 +103,13 @@ class StateWatchDialog extends Component {
     session.ui.watchToAdd = e.target.value
   }
 
-  componentDidUpdate() {
+  componentDidUpdate () {
     const field = ReactDOM.findDOMNode(this.field)
 
     field && field.focus()
   }
 
-  render() {
+  render () {
     const { ui } = this.props.session
 
     return (
@@ -126,7 +126,7 @@ class StateWatchDialog extends Component {
                 <input
                   placeholder={INPUT_PLACEHOLDER}
                   style={Styles.textField}
-                  type="text"
+                  type='text'
                   ref={node => (this.field = node)}
                   onKeyPress={this.handleKeyPress}
                   onChange={this.handleChange}

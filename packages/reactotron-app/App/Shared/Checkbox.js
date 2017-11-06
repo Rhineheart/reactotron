@@ -6,15 +6,15 @@ import Colors from '../Theme/Colors'
 
 const Styles = {
   container: {
-    cursor: 'pointer',
+    cursor: 'pointer'
   },
   icon: {
     fontSize: 22,
-    paddingRight: 4,
+    paddingRight: 4
   },
   label: {
-    color: Colors.tag,
-  },
+    color: Colors.tag
+  }
 }
 
 const Checkbox = props => {
@@ -38,7 +38,7 @@ const Checkbox = props => {
 Checkbox.propTypes = {
   label: PropTypes.string,
   checked: PropTypes.bool.isRequired,
-  onToggle: PropTypes.func.isRequired,
+  onToggle: PropTypes.func.isRequired
 }
 
 export default Checkbox
