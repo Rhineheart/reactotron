@@ -82,6 +82,44 @@ const Styles = {
 }
 
 const getRandomDate = () => new Date(Math.random() * Date.now())
+const SECOND = 1000,
+  MINUTE = SECOND * 60,
+  HOUR = MINUTE * 60,
+  DAY = HOUR * 24,
+  WEEK = DAY * 7,
+  MONTH = DAY * 30,
+  YEAR = DAY * 365
+
+const { floor } = Math
+const getRelativeDate = (date, deep = 2) => {
+  const now = Date.now()
+  const then = date - 0
+
+  const delta = now - then
+
+  console.log(now, then, delta)
+
+  let str = []
+  ;[
+    { label: 'y', ms: YEAR },
+    { label: 'm', ms: MONTH },
+    { label: 'w', ms: WEEK },
+    { label: 'd', ms: DAY },
+    { label: 'h', ms: HOUR },
+    { label: 'm', ms: MINUTE },
+    { label: 's', ms: SECOND },
+  ].reduce((d, t) => {
+    if (d < t.ms || str.length >= deep) return d
+
+    const v = floor(d / t.ms)
+
+    str.push(`${v}${t.label}`)
+
+    return d - v * t.ms
+  }, delta)
+
+  return (str.join(' ') || '0s') + ' ago'
+}
 
 @inject('session')
 @observer
@@ -134,9 +172,11 @@ export class ActionStore extends Component {
           <div>{name}</div>
           <div style={Styles.actionDateList}>
             {action.dispatchDate ? (
-              <div style={Styles.actionDate}>latest dispatch: {action.dispatchDate.toString()}</div>
+              <div style={Styles.actionDate}>
+                latest dispatch: {getRelativeDate(action.dispatchDate)}
+              </div>
             ) : null}
-            <div style={Styles.actionDate}>created: {action.created.toString()}</div>
+            <div style={Styles.actionDate}>created: {getRelativeDate(action.created)}</div>
           </div>
         </div>
         <div style={Styles.actionButtons}>
@@ -144,7 +184,11 @@ export class ActionStore extends Component {
             style={Styles.actionButton}
             size={iconSize + 6}
             onClick={() => {
-              ui.validateAndDispatch(action)
+              if (!ui.validateAndDispatch(action)) {
+                return
+              }
+
+              ui.updateDispatchDate(action, key)
             }}
           />
           <IconEdit

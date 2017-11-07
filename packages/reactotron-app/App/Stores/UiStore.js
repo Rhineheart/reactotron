@@ -38,6 +38,18 @@ if (storeable) {
 
     storedActions.unnamedActions = loadedActions.unnamedActions || []
     storedActions.storedActions = loadedActions.storedActions || []
+
+    let conversion = [storedActions.unnamedActions, storedActions.storedActions].map(L =>
+      L.map(a => {
+        a.created = a.created ? new Date(a.created) : new Date()
+        a.dispatchDate = a.dispatchDate ? new Date(a.dispatchDate) : null
+        return a
+      })
+    )
+
+    // It is directly modified in the map, buuuuuuuuut.
+    storedActions.unnamedActions = conversion[0]
+    storedActions.storedActions = conversion[1]
   } catch (e) {
     // Failed to load.
   }
@@ -137,10 +149,10 @@ class UI {
       },
 
       onSubmit: () => {
-        const { id, input, yaml } = this.newActionState
+        const { id, input, yaml, created = new Date(), dispatchDate = null } = this.newActionState
         const { editingIndex, unnamed } = this.newActionState
 
-        const action = { id, input, yaml }
+        const action = { id, input, yaml, created, dispatchDate }
 
         if (unnamed) {
           this.starAction(action, editingIndex)
@@ -197,7 +209,9 @@ class UI {
 
   @action
   storeNewAction = action => {
-    this.storedActions.push({ ...action, dispatchDate: null, created: new Date() })
+    action.id === undefined
+      ? this.unnamedActions.push({ ...action })
+      : this.storedActions.push({ ...action, dispatchDate: null, created: new Date() })
     this.storeActionsToDisk()
   }
 
@@ -206,6 +220,17 @@ class UI {
     this.newActionState = {
       ...this.newActionState,
       ...state,
+    }
+  }
+
+  @action
+  updateDispatchDate = (action, index) => {
+    if (action.id === undefined) {
+      const a = this.unnamedActions[index]
+      this.unnamedActions[index] = { ...a, dispatchDate: new Date() }
+    } else {
+      const a = this.storedActions[index]
+      this.storedActions[index] = { ...a, dispatchDate: new Date() }
     }
   }
 
